@@ -53,7 +53,7 @@ def find_flows(pcap):
         # sent packets, received packets, sent bytes, received bytes, first time, last time, protocol
         test_list = [1,
                      0,
-                     len(bytes(ip.data)),
+                     len(bytes(ip.data)) - 8,
                      0,
                      str(datetime.datetime.utcfromtimestamp(time)),
                      str(datetime.datetime.utcfromtimestamp(time)),
@@ -63,12 +63,12 @@ def find_flows(pcap):
 
         if temp1_tuple in keys:
             dic[temp1_tuple][0] += 1
-            dic[temp1_tuple][2] += len(bytes(ip.data))
+            dic[temp1_tuple][2] += len(bytes(ip.data)) - 8
             dic[temp1_tuple][5] = str(datetime.datetime.utcfromtimestamp(time))
 
         elif temp2_tuple in keys:
             dic[temp2_tuple][1] += 1
-            dic[temp2_tuple][3] += len(bytes(ip.data))
+            dic[temp2_tuple][3] += len(bytes(ip.data)) - 8
             dic[temp2_tuple][5] = str(datetime.datetime.utcfromtimestamp(time))
 
         else:
