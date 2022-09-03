@@ -23,6 +23,7 @@ def find_flows(pcap):
         src_port = -1
         dst_port = -1
         protocol = -1
+        payload_len = -1
 
         eth = dpkt.ethernet.Ethernet(packet)
 
@@ -35,11 +36,13 @@ def find_flows(pcap):
                 protocol = 'tcp'
                 src_port = ip.data.sport
                 dst_port = ip.data.dport
+                payload_len = len(bytes(ip.data)) - 20
 
             elif ip.p == dpkt.ip.IP_PROTO_UDP:
                 protocol = 'udp'
                 src_port = ip.data.sport
                 dst_port = ip.data.dport
+                payload_len = len(bytes(ip.data)) - 8
 
         if ip == -1 or \
                 ip_src == -1 or ip_dst == -1 or \
@@ -53,7 +56,7 @@ def find_flows(pcap):
         # sent packets, received packets, sent bytes, received bytes, first time, last time, protocol
         test_list = [1,
                      0,
-                     len(bytes(ip.data)) - 8,
+                     payload_len,
                      0,
                      str(datetime.datetime.utcfromtimestamp(time)),
                      str(datetime.datetime.utcfromtimestamp(time)),
@@ -63,12 +66,12 @@ def find_flows(pcap):
 
         if temp1_tuple in keys:
             dic[temp1_tuple][0] += 1
-            dic[temp1_tuple][2] += len(bytes(ip.data)) - 8
+            dic[temp1_tuple][2] += payload_len
             dic[temp1_tuple][5] = str(datetime.datetime.utcfromtimestamp(time))
 
         elif temp2_tuple in keys:
             dic[temp2_tuple][1] += 1
-            dic[temp2_tuple][3] += len(bytes(ip.data)) - 8
+            dic[temp2_tuple][3] += payload_len
             dic[temp2_tuple][5] = str(datetime.datetime.utcfromtimestamp(time))
 
         else:
